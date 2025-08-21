@@ -83,7 +83,11 @@ public class CustomerServlet extends HttpServlet {
             addCustomer(request, response);
         } else if ("update".equals(action)) {
             updateCustomer(request, response);
-        } else {
+        }
+        else if ("delete".equals(action)) {
+            deleteCustomer(request, response, user);
+        }
+        else {
             // Default redirect
             response.sendRedirect("customer");
         }
@@ -93,58 +97,80 @@ public class CustomerServlet extends HttpServlet {
     private void addCustomer(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // Get form data
-        String customerName = request.getParameter("customerName");
-        String address = request.getParameter("address");
-        String phoneNumber = request.getParameter("phoneNumber");
-        String email = request.getParameter("email");
+        try {
+            // Get form data
+            String customerName = request.getParameter("customerName");
+            String address = request.getParameter("address");
+            String phoneNumber = request.getParameter("phoneNumber");
+            String email = request.getParameter("email");
 
-        // Basic validation
-        if (customerName == null || customerName.trim().isEmpty()) {
-            request.setAttribute("errorMessage", "Customer name is required");
-            List<Customer> customers = customerDAO.getAllCustomers();
-            request.setAttribute("customers", customers);
-            request.getRequestDispatcher("customers.jsp").forward(request, response);
-            return;
-        }
-
-        // Validate phone number (simple validation)
-        if (phoneNumber != null && !phoneNumber.trim().isEmpty()) {
-            if (!phoneNumber.matches("^[0-9+\\-\\s]+$")) {
-                request.setAttribute("errorMessage", "Invalid phone number format");
-                List<Customer> customers = customerDAO.getAllCustomers();
-                request.setAttribute("customers", customers);
-                request.getRequestDispatcher("customers.jsp").forward(request, response);
+            // Basic validation
+            if (customerName == null || customerName.trim().isEmpty()) {
+                request.setAttribute("errorMessage", "Customer name is required");
+                getAllCustomers(request, response);
                 return;
             }
-        }
 
-        // Generate account number
-        String accountNumber = customerDAO.generateAccountNumber();
+            // Validate phone number (simple validation)
+            if (phoneNumber != null && !phoneNumber.trim().isEmpty()) {
+                if (!phoneNumber.matches("^[0-9+\\-\\s]+$")) {
+                    request.setAttribute("errorMessage", "Invalid phone number format");
+                    getAllCustomers(request, response);
+                    return;
+                }
+            }
 
-        // Create customer object
-        Customer customer = new Customer();
-        customer.setAccountNumber(accountNumber);
-        customer.setCustomerName(customerName.trim());
-        customer.setAddress(address != null ? address.trim() : "");
-        customer.setPhoneNumber(phoneNumber != null ? phoneNumber.trim() : "");
-        customer.setEmail(email != null ? email.trim() : "");
+            // Create customer object (don't generate account number here - let DAO handle it)
+            Customer customer = new Customer();
+            customer.setCustomerName(customerName.trim());
+            customer.setAddress(address != null ? address.trim() : "");
+            customer.setPhoneNumber(phoneNumber != null ? phoneNumber.trim() : "");
+            customer.setEmail(email != null ? email.trim() : "");
 
-        // Save to database
-        boolean success = customerDAO.addCustomer(customer);
+            // Save to database
+            boolean success = customerDAO.addCustomer(customer);
 
-        if (success) {
-            request.setAttribute("successMessage", "Customer added successfully! Account Number: " + accountNumber);
-        } else {
-            request.setAttribute("errorMessage", "Failed to add customer. Please try again.");
+            if (success) {
+                request.setAttribute("successMessage",
+                        "Customer '" + customerName + "' added successfully! Account Number: " + customer.getAccountNumber());
+            } else {
+                request.setAttribute("errorMessage", "Failed to add customer. Please try again.");
+            }
+
+        } catch (Exception e) {
+            // Enhanced error handling
+            System.err.println("Error in addCustomer: " + e.getMessage());
+            e.printStackTrace();
+
+            String errorMessage;
+            if (e.getMessage() != null) {
+                if (e.getMessage().contains("Duplicate entry") && e.getMessage().contains("account_number")) {
+                    errorMessage = "System error: Account number conflict. Please try again in a moment.";
+                } else if (e.getMessage().contains("Data too long")) {
+                    errorMessage = "One or more fields contain too much data. Please check your input.";
+                } else if (e.getMessage().contains("cannot be null")) {
+                    errorMessage = "Required field is missing. Please check all required fields.";
+                } else {
+                    errorMessage = "An unexpected error occurred: " + e.getMessage();
+                }
+            } else {
+                errorMessage = "An unexpected error occurred. Please try again.";
+            }
+
+            request.setAttribute("errorMessage", errorMessage);
         }
 
         // Reload customer list and forward to page
+        getAllCustomers(request, response);
+    }
+
+    // Add this helper method to reload customers
+    private void getAllCustomers(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         List<Customer> customers = customerDAO.getAllCustomers();
         request.setAttribute("customers", customers);
         request.getRequestDispatcher("customers.jsp").forward(request, response);
     }
-
     // Update existing customer
     private void updateCustomer(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -202,4 +228,43 @@ public class CustomerServlet extends HttpServlet {
         // Redirect to customer list
         response.sendRedirect("customer");
     }
-}
+    // Add this new method to CustomerServlet class
+    private void deleteCustomer(HttpServletRequest request, HttpServletResponse response, User user)
+            throws ServletException, IOException {
+
+        // Check if user has permission to delete (Admin only)
+        if (!user.isAdmin()) {
+            request.setAttribute("errorMessage", "Access denied. Only Admin can delete customers.");
+            List<Customer> customers = customerDAO.getAllCustomers();
+            request.setAttribute("customers", customers);
+            request.getRequestDispatcher("customers.jsp").forward(request, response);
+            return;
+        }
+
+        String customerIdStr = request.getParameter("customerId");
+
+        try {
+            int customerId = Integer.parseInt(customerIdStr);
+
+            // Check if customer has bills
+            if (customerDAO.customerHasBills(customerId)) {
+                request.setAttribute("errorMessage",
+                        "Cannot delete customer. Customer has existing bills in the system.");
+            } else {
+                // Safe to delete
+                boolean success = customerDAO.deleteCustomer(customerId);
+
+                if (success) {
+                    request.setAttribute("successMessage", "Customer deleted successfully!");
+                } else {
+                    request.setAttribute("errorMessage", "Failed to delete customer. Please try again.");
+                }
+            }
+
+        } catch (NumberFormatException e) {
+            request.setAttribute("errorMessage", "Invalid customer ID.");
+        }
+        response.sendRedirect("customer");
+    }
+
+    }

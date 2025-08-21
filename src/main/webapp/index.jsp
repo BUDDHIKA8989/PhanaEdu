@@ -21,47 +21,80 @@
         }
 
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
-            color: #333;
+            color: #170e0e;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
         }
 
-        .hero-section {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+        .main-container {
             min-height: 100vh;
             display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .welcome-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 60px 40px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            max-width: 600px;
+            width: 100%;
+            border: 1px solid rgba(31, 19, 19, 0.2);
+        }
+
+        .logo-section {
+            margin-bottom: 40px;
+        }
+
+        .logo-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
-            text-align: center;
-            position: relative;
-        }
-
-        .hero-content {
-            max-width: 800px;
-            padding: 0 20px;
-        }
-
-        .hero-title {
-            font-size: 3.5rem;
-            font-weight: bold;
             margin-bottom: 20px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
         }
 
-        .hero-subtitle {
-            font-size: 1.3rem;
-            margin-bottom: 30px;
-            opacity: 0.9;
+        .logo-icon::before {
+            content: "📚";
+            font-size: 35px;
         }
 
-        .hero-description {
-            font-size: 1.1rem;
+        .system-title {
+            font-size: 2.8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #3553e0 0%, #1b28b2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .system-subtitle {
+            font-size: 1.2rem;
+            color: #130c0c;
             margin-bottom: 40px;
-            opacity: 0.8;
+            font-weight: 300;
         }
 
-        .cta-buttons {
+        .description-text {
+            font-size: 1.1rem;
+            color: #170f0f;
+            margin-bottom: 50px;
+            line-height: 1.8;
+        }
+
+        .action-buttons {
             display: flex;
             gap: 20px;
             justify-content: center;
@@ -69,180 +102,208 @@
         }
 
         .btn {
-            padding: 15px 30px;
+            padding: 18px 40px;
             font-size: 1.1rem;
             border: none;
             border-radius: 50px;
             cursor: pointer;
             text-decoration: none;
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
             transition: all 0.3s ease;
-            font-weight: bold;
+            font-weight: 600;
+            position: relative;
+            overflow: hidden;
+            min-width: 160px;
+            justify-content: center;
         }
 
-        .btn-primary {
-            background: #fff;
-            color: #667eea;
-        }
-
-        .btn-primary:hover {
-            background: #f8f9fa;
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-        }
-
-        .btn-secondary {
-            background: transparent;
-            color: white;
-            border: 2px solid white;
-        }
-
-        .btn-secondary:hover {
-            background: white;
-            color: #667eea;
-            transform: translateY(-2px);
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .stats-section {
-            background: #2c3e50;
-            color: white;
-            padding: 60px 20px;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 40px;
-            text-align: center;
-        }
-
-        .stat-item h3 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            color: #3498db;
-        }
-
-        .stat-item p {
-            font-size: 1.1rem;
-            opacity: 0.9;
-        }
-
-        .footer {
-            background: #34495e;
-            color: white;
-            text-align: center;
-            padding: 40px 20px;
-        }
-
-        .user-info-bar {
-            background: #3498db;
-            color: white;
-            padding: 10px 20px;
-            text-align: center;
-            position: fixed;
+        .btn::before {
+            content: '';
+            position: absolute;
             top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(16, 7, 7, 0.2), transparent);
+            transition: left 0.5s;
         }
 
-        .user-info-bar.logged-in + .main-content {
-            margin-top: 60px;
+        .btn:hover::before {
+            left: 100%;
         }
 
+        .btn-login {
+            background: linear-gradient(135deg, #445eda 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-login:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(102, 126, 234, 0.5);
+        }
+
+        .btn-icon {
+            font-size: 1.2rem;
+        }
+
+        .features-preview {
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(102, 126, 234, 0.2);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .feature-item {
+            text-align: center;
+            color: #1f1111;
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            opacity: 0.8;
+        }
+
+        .feature-text {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .footer-info {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        /* Responsive Design */
         @media (max-width: 768px) {
-            .hero-title {
-                font-size: 2.5rem;
+            .welcome-card {
+                padding: 40px 30px;
+                margin: 20px;
             }
 
-            .hero-subtitle {
-                font-size: 1.1rem;
+            .system-title {
+                font-size: 2.2rem;
             }
 
-            .cta-buttons {
-                flex-direction: column;
-                align-items: center;
+            .action-buttons {
+                justify-content: center;
             }
 
             .btn {
-                width: 250px;
+                width: 100%;
+                max-width: 280px;
+            }
+
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .system-title {
+                font-size: 1.8rem;
+            }
+
+            .welcome-card {
+                padding: 30px 20px;
+            }
+        }
+
+        /* Loading Animation */
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        /* Glassmorphism effect enhancement */
+        @supports (backdrop-filter: blur(10px)) {
+            .welcome-card {
+                background: rgba(31, 21, 21, 0.1);
+                backdrop-filter: blur(20px);
+                border: 1px solid rgba(37, 21, 21, 0.2);
             }
         }
     </style>
 </head>
 <body>
-<!-- User Info Bar (if logged in) -->
-<% if (isLoggedIn) { %>
-<div class="user-info-bar logged-in">
-    <span>Welcome back, <strong><%= user.getFullName() %></strong> (<%= user.getRole() %>)</span>
-    <span style="float: right;">
-                <a href="dashboard.jsp" style="color: white; text-decoration: none; margin-right: 15px;">Dashboard</a>
-                <a href="login" style="color: white; text-decoration: none;">Logout</a>
-            </span>
-</div>
-<% } %>
+<div class="main-container">
+    <div class="welcome-card">
+        <!-- Logo Section -->
+        <div class="logo-section">
+            <div class="logo-icon"></div>
+            <h1 class="system-title">Pahana Edu Bookshop</h1>
+            <p class="system-subtitle">Management System</p>
+        </div>
 
-<div class="main-content">
-    <!-- Stats Section -->
-    <section class="stats-section">
-        <div class="container">
-            <div class="stats-grid">
-                <div class="stat-item">
-                    <h3>100%</h3>
-                    <p>Web-Based System</p>
+        <!-- Description -->
+        <div class="description-text">
+            Comprehensive bookshop management solution for inventory tracking,
+            customer management, billing, and business analytics.
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <a href="login" class="btn btn-login">
+                <span class="btn-icon">🔑</span>
+                Login to System
+            </a>
+        </div>
+
+        <!-- Features Preview -->
+        <div class="features-preview">
+            <div class="features-grid">
+                <div class="feature-item">
+                    <div class="feature-icon">👥</div>
+                    <div class="feature-text">Customer Management</div>
                 </div>
-                <div class="stat-item">
-                    <h3>3</h3>
-                    <p>User Role Levels</p>
+                <div class="feature-item">
+                    <div class="feature-icon">📊</div>
+                    <div class="feature-text">Inventory Control</div>
                 </div>
-                <div class="stat-item">
-                    <h3>24/7</h3>
-                    <p>System Availability</p>
+                <div class="feature-item">
+                    <div class="feature-icon">💰</div>
+                    <div class="feature-text">Billing System</div>
                 </div>
-                <div class="stat-item">
-                    <h3>∞</h3>
-                    <p>Scalable Records</p>
+                <div class="feature-item">
+                    <div class="feature-icon">📈</div>
+                    <div class="feature-text">Reports & Analytics</div>
                 </div>
             </div>
         </div>
-    </section>
-
-
-
-    <!-- Hero Section ) -->
-    <section class="hero-section">
-        <div class="hero-content">
-            <h1 class="hero-title">Pahana Edu Bookshop</h1>
-
-            <p class="hero-description">
-                Streamline your bookshop operations with our comprehensive management system.
-                Handle customer accounts, inventory management, billing, and reporting all in one place.
-            </p>
-
-            <div class="cta-buttons">
-                <% if (isLoggedIn) { %>
-                <a href="dashboard.jsp" class="btn btn-primary">Go to Dashboard</a>
-                <a href="customer" class="btn btn-secondary">Manage Customers</a>
-                <% } else { %>
-                <a href="login" class="btn btn-primary">Login to System</a>
-                <% } %>
-            </div>
-        </div>
-    </section>
-</div>
-
-<!-- Footer -->
-<footer class="footer">
-    <div class="container">
-        <p>&copy; 2025 Pahana Edu Bookshop Management System. Built with Java Servlets & MySQL.</p>
-        <p style="margin-top: 10px; opacity: 0.8;">Comprehensive solution for bookshop management and operations.</p>
     </div>
-</footer>
+</div>
+
+<!-- Footer Info -->
+<div class="footer-info">
+    © 2025 Pahana Edu Bookshop • Java Web Application
+</div>
+
+<script>
+    // Add some interactive effects
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add smooth scroll behavior
+        document.documentElement.style.scrollBehavior = 'smooth';
+
+        // Add keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && e.target.classList.contains('btn')) {
+                e.target.click();
+            }
+        });
+    });
+</script>
 </body>
 </html>

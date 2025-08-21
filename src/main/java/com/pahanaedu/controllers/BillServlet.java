@@ -19,6 +19,7 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.text.DecimalFormat;
 
 @WebServlet("/bill")
 public class BillServlet extends HttpServlet {
@@ -66,9 +67,16 @@ public class BillServlet extends HttpServlet {
             // List all bills
             listBills(request, response);
 
-        } else {
+
+        }
+        // In BillServlet doGet method, add this case:
+        else if ("downloadTxt".equals(action)) {
+            downloadTxtBill(request, response);
+        }
+        else {
             // Default - Show billing dashboard
             showBillingDashboard(request, response);
+
         }
     }
 
@@ -371,5 +379,95 @@ public class BillServlet extends HttpServlet {
         }
 
         response.sendRedirect("bill?action=list");
+    }
+
+    // Add this method to BillServlet.java
+
+    // Handle TXT file download
+    private void downloadTxtBill(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        String billIdStr = request.getParameter("billId");
+
+        if (billIdStr != null) {
+            try {
+                int billId = Integer.parseInt(billIdStr);
+                Bill bill = billDAO.getBillById(billId);
+
+                if (bill != null) {
+                    // Set response headers for file download
+                    response.setContentType("text/plain");
+                    response.setHeader("Content-Disposition", "attachment; filename=\"" + bill.getBillNumber() + ".txt\"");
+
+                    // Generate TXT content
+                    String txtContent = generateTxtBill(bill);
+
+                    // Write to response
+                    response.getWriter().write(txtContent);
+                    return;
+                }
+            } catch (NumberFormatException e) {
+                // Invalid bill ID
+            }
+        }
+
+        response.sendRedirect("bill?action=list");
+    }
+
+    // Helper method to generate TXT format
+    private String generateTxtBill(Bill bill) {
+        StringBuilder txt = new StringBuilder();
+        DecimalFormat df = new DecimalFormat("#,##0.00");
+
+        txt.append("=====================================\n");
+        txt.append("    PAHANA EDU BOOKSHOP\n");
+        txt.append("    Complete Bookshop Management System\n");
+        txt.append("    Colombo, Sri Lanka\n");
+        txt.append("=====================================\n\n");
+
+        txt.append("SALES INVOICE\n\n");
+
+        txt.append("Bill Number: ").append(bill.getBillNumber()).append("\n");
+        txt.append("Date: ").append(bill.getBillDate()).append("\n");
+        txt.append("Customer: ").append(bill.getCustomerName()).append("\n");
+        txt.append("Account: ").append(bill.getCustomerAccountNumber()).append("\n");
+        txt.append("Payment Method: ").append(bill.getPaymentMethod()).append("\n");
+        txt.append("Status: ").append(bill.getPaymentStatus()).append("\n\n");
+
+        txt.append("-------------------------------------\n");
+        txt.append("ITEMS:\n");
+        txt.append("-------------------------------------\n");
+
+        if (bill.getBillItems() != null && !bill.getBillItems().isEmpty()) {
+            for (BillItem item : bill.getBillItems()) {
+                txt.append(item.getItemName()).append("\n");
+                txt.append("  Qty: ").append(item.getQuantity());
+                txt.append(" x Rs.").append(df.format(item.getUnitPrice()));
+                txt.append(" = Rs.").append(df.format(item.getLineTotal())).append("\n\n");
+            }
+        }
+
+        txt.append("-------------------------------------\n");
+        txt.append("TOTALS:\n");
+        txt.append("-------------------------------------\n");
+        txt.append("Subtotal:     Rs.").append(df.format(bill.getSubtotal())).append("\n");
+
+        if (bill.getDiscountPercentage() > 0) {
+            txt.append("Discount (").append(bill.getDiscountPercentage()).append("%): Rs.");
+            txt.append(df.format(bill.getDiscountAmount())).append("\n");
+        }
+
+        txt.append("FINAL TOTAL:  Rs.").append(df.format(bill.getFinalAmount())).append("\n\n");
+
+        if (bill.getNotes() != null && !bill.getNotes().trim().isEmpty()) {
+            txt.append("Notes: ").append(bill.getNotes()).append("\n\n");
+        }
+
+        txt.append("-------------------------------------\n");
+        txt.append("Thank you for your business!\n");
+        txt.append("Generated: ").append(new java.util.Date()).append("\n");
+        txt.append("=====================================\n");
+
+        return txt.toString();
     }
 }

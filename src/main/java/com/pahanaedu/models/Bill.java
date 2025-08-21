@@ -32,7 +32,7 @@ public class Bill {
         this.discountPercentage = 0.0;
     }
 
-    // Constructor with essential parameters
+
     public Bill(String billNumber, int customerId, int createdBy) {
         this();
         this.billNumber = billNumber;
@@ -40,7 +40,6 @@ public class Bill {
         this.createdBy = createdBy;
     }
 
-    // Business logic methods
     public boolean isValid() {
         return billNumber != null && !billNumber.trim().isEmpty() &&
                 customerId > 0 && billItems != null && !billItems.isEmpty();

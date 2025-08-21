@@ -166,7 +166,7 @@
         <div class="menu-card">
             <h3>📊 Reports</h3>
             <p>View sales and inventory reports</p>
-            <a href="#" class="menu-btn">View Reports</a>
+            <a href="reports.jsp" class="menu-btn">View Reports</a>
         </div>
         <% } %>
 
@@ -175,7 +175,7 @@
         <div class="menu-card">
             <h3>⚙️ User Management</h3>
             <p>Manage system users and permissions</p>
-            <a href="#" class="menu-btn">Manage Users</a>
+            <a href="reports.jsp" class="menu-btn">Manage Users</a>
         </div>
         <% } %>
 
@@ -183,7 +183,7 @@
         <div class="menu-card">
             <h3>❓ Help</h3>
             <p>System usage guidelines and support</p>
-            <a href="#" class="menu-btn">Get Help</a>
+            <a href="help.jsp" class="menu-btn">Get Help</a>
         </div>
     </div>
 </div>

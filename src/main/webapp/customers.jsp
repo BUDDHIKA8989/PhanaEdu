@@ -99,8 +99,31 @@
         .btn-success { background: #27ae60; color: white; }
         .btn-warning { background: #f39c12; color: white; }
         .btn-secondary { background: #95a5a6; color: white; }
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
 
         .btn:hover { opacity: 0.9; }
+
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+
+        .btn-danger:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 12px;
+            margin-right: 5px;
+        }
+
+        .actions-cell {
+            white-space: nowrap;
+        }
 
         .table-container {
             background: white;
@@ -135,6 +158,10 @@
 
         .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
         .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+
+        .actions-cell {
+            white-space: nowrap;
+        }
     </style>
 </head>
 <body>
@@ -233,9 +260,18 @@
                 <td><%= customer.getPhoneNumber() != null ? customer.getPhoneNumber() : "-" %></td>
                 <td><%= customer.getEmail() != null ? customer.getEmail() : "-" %></td>
                 <td><%= customer.getRegistrationDate() %></td>
-                <td>
+                <td class="actions-cell">
                     <a href="customer?action=edit&accountNumber=<%= customer.getAccountNumber() %>"
-                       class="btn btn-warning">Edit</a>
+                       class="btn btn-warning btn-small">Edit</a>
+
+                    <% if (user.isAdmin()) { %>
+                    <form action="customer" method="post" style="display: inline; margin-left: 5px;"
+                          onsubmit="return confirmDelete('<%= customer.getCustomerName() %>')">
+                        <input type="hidden" name="action" value="delete">
+                        <input type="hidden" name="customerId" value="<%= customer.getCustomerId() %>">
+                        <button type="submit" class="btn btn-danger btn-small">Delete</button>
+                    </form>
+                    <% } %>
                 </td>
             </tr>
             <% } %>
@@ -250,5 +286,30 @@
         </table>
     </div>
 </div>
+
+<script>
+    function confirmDelete(customerName) {
+        return confirm('Are you sure you want to delete customer "' + customerName + '"?\n\n' +
+            'This action cannot be undone. The customer will be permanently removed from the system.\n\n' +
+            'Note: Customers with existing bills cannot be deleted.');
+    }
+
+    // Optional: Add double-click protection
+    let deleteInProgress = false;
+    document.addEventListener('DOMContentLoaded', function() {
+        const deleteForms = document.querySelectorAll('form[onsubmit*="confirmDelete"]');
+        deleteForms.forEach(form => {
+            form.addEventListener('submit', function(e) {
+                if (deleteInProgress) {
+                    e.preventDefault();
+                    return false;
+                }
+                deleteInProgress = true;
+                setTimeout(() => deleteInProgress = false, 3000);
+            });
+        });
+    });
+</script>
+
 </body>
 </html>

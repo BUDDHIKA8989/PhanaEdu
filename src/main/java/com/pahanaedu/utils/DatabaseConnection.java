@@ -7,8 +7,8 @@ import java.sql.SQLException;
 
 public class DatabaseConnection {
     private static final String URL = "jdbc:mysql://localhost:3306/pahana_edu_bookshop";
-    private static final String USERNAME = "root";  // Your MySQL username
-    private static final String PASSWORD = "root";  // Your MySQL password
+    private static final String USERNAME = "root";
+    private static final String PASSWORD = "root";
 
     public static Connection getConnection() {
         try {
@@ -20,18 +20,17 @@ public class DatabaseConnection {
         }
     }
 
-    // Test method
     public static void main(String[] args) {
         Connection conn = getConnection();
         if (conn != null) {
-            System.out.println("✅ Database connected successfully!");
+            System.out.println(" Database connected successfully!");
             try {
                 conn.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         } else {
-            System.out.println("❌ Database connection failed!");
+            System.out.println(" Database connection failed!");
         }
     }
 }
